@@ -1457,7 +1457,12 @@ class GitHub(models.GitHubCore):
         self.session.app_bearer_token_auth(token, expire_in)
 
     def login_as_app_installation(
-        self, private_key_pem, app_id, installation_id, expire_in=30
+        self,
+        app_id,
+        installation_id,
+        private_key_pem=None,
+        expire_in=30,
+        token_creator = None
     ):
         """Login using your GitHub App's installation credentials.
 
@@ -1502,7 +1507,7 @@ class GitHub(models.GitHubCore):
             https://developer.github.com/v3/apps/#create-a-new-installation-token
         """
         jwt_token = apps.create_token(
-            private_key_pem, app_id, expire_in=expire_in
+            app_id, private_key_pem, expire_in=expire_in, token_creator=token_creator
         )
         bearer_auth = session.AppBearerTokenAuth(jwt_token, expire_in)
         url = self._build_url(
